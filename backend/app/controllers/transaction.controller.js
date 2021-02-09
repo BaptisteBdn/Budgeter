@@ -1,5 +1,9 @@
 const db = require("../models");
+const { Op } = require("sequelize");
+const { user } = require("../models");
 const Transaction = db.transactions;
+const Family = db.family;
+const User = db.user;
 
 // Create and Save a new Transaction
 exports.create = (req, res) => {
@@ -22,13 +26,12 @@ exports.create = (req, res) => {
         subcategory: req.body.subcategory,
         comment: req.body.comment,
         who: req.body.who,
+        userId: req.userId
     };
 
     // Save Transaction in the database
     Transaction.create(transaction)
-        .then(data => {
-            res.send(data);
-        })
+        .then(res.status(200).send())
         .catch(err => {
             res.status(500).send({
                 message:
@@ -40,7 +43,8 @@ exports.create = (req, res) => {
 // Retrieve all Transactions from the database.
 exports.findAll = (req, res) => {
     Transaction.findAll({
-        where: {}
+        attributes: { exclude: ['createdAt', 'updatedAt', 'userId'] },
+        where: { userId: req.userId }
     })
         .then(data => {
             res.send(data);
@@ -51,6 +55,44 @@ exports.findAll = (req, res) => {
                     err.message || "Some error occurred while retrieving transactions."
             });
         });
+};
+
+// Retrieve all Transactions from the same family.
+exports.findAllFamily = (req, res) => {
+    const familyId = req.params.familyId;
+
+    User.findAll({
+        attributes: ['id'],
+        where: {
+            familyId: familyId
+        },
+        raw: true
+    }).then(users => {
+        Transaction.findAll({
+            attributes: { exclude: ['createdAt', 'updatedAt', 'userId'] },
+            where: {
+                userId: {
+                    [Op.or]: users.map(user => user.id)
+                }
+            }
+        })
+            .then(data => {
+                res.send(data);
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while retrieving transactions."
+                });
+            });
+    })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving users."
+            });
+        });
+
 };
 
 

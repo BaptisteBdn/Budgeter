@@ -26,6 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       who: {
         type: DataTypes.ARRAY(DataTypes.INTEGER)
+      },
+      userId: {
+        type: DataTypes.INTEGER
       }
     });
   
