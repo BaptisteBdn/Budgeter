@@ -57,42 +57,26 @@ exports.findAll = (req, res) => {
         });
 };
 
-// Retrieve all Transactions from the same family.
-exports.findAllFamily = (req, res) => {
-    const familyId = req.params.familyId;
-
-    User.findAll({
-        attributes: ['id'],
+// Retrieve all Transactions for specified users.
+exports.getTransactionsUsers = (req, res, users, attributes) => {
+    return Transaction.findAll({
+        attributes: attributes,
         where: {
-            familyId: familyId
+            userId: {
+                [Op.or]: users
+            }
         },
         raw: true
-    }).then(users => {
-        Transaction.findAll({
-            attributes: { exclude: ['createdAt', 'updatedAt', 'userId'] },
-            where: {
-                userId: {
-                    [Op.or]: users.map(user => user.id)
-                }
-            }
-        })
-            .then(data => {
-                res.send(data);
-            })
-            .catch(err => {
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while retrieving transactions."
-                });
-            });
     })
+        .then(data => {
+            return data;
+        })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while retrieving users."
+                    err.message || "Some error occurred while retrieving transactions."
             });
         });
-
 };
 
 

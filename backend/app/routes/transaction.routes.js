@@ -18,9 +18,6 @@ module.exports = app => {
   
     // Retrieve all Transaction
     router.get("/", transactions.findAll);
-
-    // Retrieve all Transaction
-    router.get("/family/:familyId", transactions.findAllFamily);
   
     // Retrieve a single Transaction with id
     router.get("/:id", transactions.findById);

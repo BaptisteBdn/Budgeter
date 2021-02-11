@@ -22,4 +22,7 @@ module.exports = function (app) {
     // Delete a family
     router.delete("/:id", family.delete);
 
+    // Retrieve balance between family members
+    router.get("/balance", family.getBalance);
+
 };

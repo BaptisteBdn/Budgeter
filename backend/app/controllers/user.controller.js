@@ -1,3 +1,4 @@
+const { family } = require("../models");
 const db = require("../models");
 const User = db.user;
 
@@ -24,13 +25,14 @@ exports.addFamily = (req, res) => {
         });
 };
 
-
-exports.getFamily = (req, res) => {
-    User.find({ familyId: familyId }, {
-        where: { id: req.userId }
+// Return the familyId of the current user
+exports.getCurrentUserInfos = (req, res) => {
+    return User.findAll({
+        where: { id: req.userId },
+        raw: true
     })
         .then(data => {
-            res.send(data);
+            return data;
         })
         .catch(err => {
             res.status(500).send({
@@ -38,6 +40,45 @@ exports.getFamily = (req, res) => {
                     err.message || "Some error occurred while retrieving user."
             });
         });
+};
+
+
+// Get users infos from the same family
+exports.getFamilyUsers = (req, res, familyId) => {
+    return User.findAll({
+        attributes: ['id', 'username'],
+        where: { familyId: familyId },
+        raw: true
+    })
+        .then(data => {
+            return data;
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving user."
+            });
+        });
+}
+
+// Return the userId of the family of the current user
+exports.getFamilyUsersFromCurrentUser = (req, res) => {
+    return this.getFamilyFromCurrentUser(req, res).then(family => {
+        return User.findAll({
+            attributes: ['id'],
+            where: { familyId: family[0].familyId },
+            raw: true
+        })
+            .then(data => {
+                return data;
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while retrieving user."
+                });
+            });
+    });
 };
 
 exports.removeFamily = (req, res) => {
