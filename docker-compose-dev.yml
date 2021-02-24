@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      target: dev
+    ports:
+      - 8081:8081
+    volumes:
+      - ./backend:/src
+    depends_on: 
+      - db
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      SECRET: ${SECRET}
+    
+  db:
+    image: postgres
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}

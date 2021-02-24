@@ -1,4 +1,4 @@
 module.exports = {
-    secret: "bat-secret-key"
+    secret: process.env.SECRET
   };
   
