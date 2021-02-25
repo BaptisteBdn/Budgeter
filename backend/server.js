@@ -13,8 +13,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // sync database
 db.sequelize.sync().then(() => {
-    console.log("Drop and re-sync db.");
-  });
+    console.log("Sync db.");
+});
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Budgeter." });

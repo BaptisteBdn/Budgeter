@@ -35,10 +35,8 @@ module.exports = {
     sourceMap: process.env.NODE_ENV !== 'production'
   },
   devServer: {
-    useLocalIp: false,
-    proxy: 'http://localhost:8080',
-    public: '172.16.2.100:8080',
-    disableHostCheck: true,
-    hot: true
+    watchOptions: {
+      poll: true
+   }
   }
 };
