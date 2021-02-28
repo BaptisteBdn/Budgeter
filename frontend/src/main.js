@@ -13,11 +13,12 @@
  */
 import Vue from "vue";
 import VueRouter from "vue-router";
+import VeeValidate from 'vee-validate';
 import RouterPrefetch from 'vue-router-prefetch'
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import App from "./App";
-// TIP: change to import router from "./router/starterRouter"; to start with a clean layout
 import router from "./router/index";
+import store from './store';
 
 import BlackDashboard from "./plugins/blackDashboard";
 import i18n from "./i18n"
@@ -27,11 +28,13 @@ Vue.use(BlackDashboard);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons)
 Vue.use(VueRouter);
+Vue.use(VeeValidate, { fieldsBagName: 'veeFields' });
 Vue.use(RouterPrefetch);
 
 /* eslint-disable no-new */
 new Vue({
   router,
+  store,
   i18n,
   render: h => h(App)
 }).$mount("#app");

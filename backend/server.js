@@ -5,6 +5,14 @@ const cors = require("cors");
 const app = express();
 const db = require("./app/models");
 
+// enable cors
+
+var corsOptions = {
+  origin: "http://localhost:8080"
+};
+
+app.use(cors(corsOptions));
+
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 

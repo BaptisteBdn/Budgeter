@@ -5,10 +5,7 @@
   >
     <div class="container-fluid">
       <div class="navbar-wrapper">
-        <div
-          class="navbar-toggle d-inline"
-          :class="{ toggled: $sidebar.showSidebar }"
-        >
+        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }">
           <button
             type="button"
             class="navbar-toggler"
@@ -39,12 +36,7 @@
       <collapse-transition>
         <div class="collapse navbar-collapse show" v-show="showMenu">
           <ul class="navbar-nav ml-auto">
-            <base-dropdown              
-              tag="li"
-              menu-on-right
-              title-tag="a"
-              class="nav-item"
-            >
+            <base-dropdown tag="li" menu-on-right title-tag="a" class="nav-item">
               <a
                 slot="title"
                 href="#"
@@ -56,11 +48,10 @@
                 <p class="d-lg-none">Transaction</p>
               </a>
               <li class="nav-link">
-                <router-link 
+                <router-link
                   class="nav-item dropdown-item"
-                  :to="{ name: 'addtransactions' }"
-                  >Ajouter une transaction</router-link
-                >
+                  :to="{ name: 'transaction' }"
+                >Ajouter une transaction</router-link>
               </li>
             </base-dropdown>
             <base-dropdown
@@ -69,6 +60,7 @@
               title-tag="a"
               class="nav-item"
               menu-classes="dropdown-navbar"
+              v-if="!showRegister"
             >
               <a
                 slot="title"
@@ -88,7 +80,32 @@
               </li>
               <div class="dropdown-divider"></div>
               <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Log out</a>
+                <a href @click.prevent="logOut" class="nav-item dropdown-item">Log out</a>
+              </li>
+            </base-dropdown>
+            <base-dropdown
+              tag="li"
+              menu-on-right
+              title-tag="a"
+              class="nav-item"
+              menu-classes="dropdown-navbar"
+              v-if="showRegister"
+            >
+              <a
+                slot="title"
+                href="#"
+                class="dropdown-toggle nav-link"
+                data-toggle="dropdown"
+                aria-expanded="true"
+              >
+                <i class="tim-icons icon-badge"></i>
+                <p class="d-lg-none">Login</p>
+              </a>
+              <li class="nav-link">
+                <router-link class="nav-item dropdown-item" :to="{ name: 'register' }">Register</router-link>
+              </li>
+              <li class="nav-link">
+                <router-link class="nav-item dropdown-item" :to="{ name: 'login' }">Login</router-link>
               </li>
             </base-dropdown>
           </ul>
@@ -104,19 +121,22 @@ import Modal from "@/components/Modal";
 export default {
   components: {
     CollapseTransition,
-    Modal,
+    Modal
   },
   computed: {
     routeName() {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
-    },
+    }
   },
   data() {
+    this.$route.path === "/login" || this.$route.path === "/register"
+      ? (this.showRegister = true)
+      : (this.showRegister = false);
     return {
       showMenu: false,
       searchModalVisible: false,
-      searchQuery: "",
+      searchQuery: ""
     };
   },
   methods: {
@@ -137,8 +157,12 @@ export default {
     },
     toggleMenu() {
       this.showMenu = !this.showMenu;
+    },
+    logOut() {
+      this.$store.dispatch("auth/logout");
+      this.$router.push("/login");
     }
-  },
+  }
 };
 </script>
 <style>

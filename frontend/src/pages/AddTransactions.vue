@@ -157,7 +157,7 @@ export default {
         message: this.message[success],
         timeout: 2500,
       });
-    },
+    }
   },
 };
 </script>
