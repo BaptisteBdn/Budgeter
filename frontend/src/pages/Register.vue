@@ -7,7 +7,7 @@
       <div class="block block-three"></div>
       <div class="block block-four"></div>
       <a>
-        <img class="avatar" src="img/default-avatar.png" alt="...">
+        <img class="avatar" src="img/default-avatar.png" alt="..." />
       </a>
     </div>
     <p></p>
@@ -21,12 +21,14 @@
             type="text"
             class="form-control"
             name="username"
-          >
+          />
           <div
             v-if="submitted && errors.has('username')"
             class="alert alert-danger"
             role="alert"
-          >{{errors.first('username')}}</div>
+          >
+            {{ errors.first("username") }}
+          </div>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -36,12 +38,14 @@
             type="password"
             class="form-control"
             name="password"
-          >
+          />
           <div
             v-if="submitted && errors.has('password')"
             class="alert alert-danger"
             role="alert"
-          >{{errors.first('password')}}</div>
+          >
+            {{ errors.first("password") }}
+          </div>
         </div>
         <div class="form-group">
           <button class="btn btn-primary btn-block">Sign Up</button>
@@ -62,13 +66,13 @@ export default {
       user: new User("", ""),
       submitted: false,
       type: ["danger", "success"],
-      icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"]
+      icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"],
     };
   },
   computed: {
     loggedIn() {
       return this.$store.state.auth.status.loggedIn;
-    }
+    },
   },
   mounted() {
     if (this.loggedIn) {
@@ -78,19 +82,21 @@ export default {
   methods: {
     handleRegister() {
       this.submitted = true;
-      this.$validator.validate().then(isValid => {
+      this.$validator.validate().then((isValid) => {
         if (isValid) {
           this.$store.dispatch("auth/register", this.user).then(
-            data => {
+            (data) => {
               this.notifyVue("bottom", "center", 1, data.message);
               this.$router.push("/login");
             },
-            error => {
+            (error) => {
               this.notifyVue(
                 "bottom",
                 "center",
                 0,
-                error.response.data.message
+                (error.response && error.response.data.message) ||
+                  error.message ||
+                  error.toString()
               );
             }
           );
@@ -105,9 +111,9 @@ export default {
         type: this.type[success],
         icon: this.icon[success],
         message: message,
-        timeout: 2500
+        timeout: 2500,
       });
-    }
-  }
+    },
+  },
 };
 </script>

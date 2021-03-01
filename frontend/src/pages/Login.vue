@@ -7,7 +7,7 @@
       <div class="block block-three"></div>
       <div class="block block-four"></div>
       <a>
-        <img class="avatar" src="img/rabbit3.png" alt="...">
+        <img class="avatar" src="img/rabbit3.png" alt="..." />
       </a>
     </div>
     <p></p>
@@ -20,12 +20,14 @@
           type="text"
           class="form-control"
           name="username"
-        >
+        />
         <div
           v-if="errors.has('username')"
           class="alert alert-danger"
           role="alert"
-        >Username is required!</div>
+        >
+          Username is required!
+        </div>
       </div>
       <div class="form-group">
         <label for="password">Password</label>
@@ -35,16 +37,21 @@
           type="password"
           class="form-control"
           name="password"
-        >
+        />
         <div
           v-if="errors.has('password')"
           class="alert alert-danger"
           role="alert"
-        >Password is required!</div>
+        >
+          Password is required!
+        </div>
       </div>
       <div class="form-group">
         <button class="btn btn-primary btn-block" :disabled="loading">
-          <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+          <span
+            v-show="loading"
+            class="spinner-border spinner-border-sm"
+          ></span>
           <span>Login</span>
         </button>
       </div>
@@ -53,50 +60,52 @@
 </template>
 
 <script>
-import User from '../models/user';
+import User from "../models/user";
 import NotificationTemplate from "./Notifications/NotificationTemplate";
 
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     return {
-      user: new User('', ''),
+      user: new User("", ""),
       loading: false,
       type: ["danger", "success"],
-      icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"]
+      icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"],
     };
   },
   computed: {
     loggedIn() {
       return this.$store.state.auth.status.loggedIn;
-    }
+    },
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push('/dashboard');
+      this.$router.push("/dashboard");
     }
   },
   methods: {
     handleLogin() {
       this.loading = true;
-      this.$validator.validateAll().then(isValid => {
+      this.$validator.validateAll().then((isValid) => {
         if (!isValid) {
           this.loading = false;
           return;
         }
 
         if (this.user.username && this.user.password) {
-          this.$store.dispatch('auth/login', this.user).then(
+          this.$store.dispatch("auth/login", this.user).then(
             () => {
-              this.$router.push('/dashboard');
+              this.$router.push("/dashboard");
             },
-            error => {
+            (error) => {
               this.loading = false;
               this.notifyVue(
                 "bottom",
                 "center",
                 0,
-                error.response.data.message
+                (error.response && error.response.data.message) ||
+                  error.message ||
+                  error.toString()
               );
             }
           );
@@ -111,10 +120,10 @@ export default {
         type: this.type[success],
         icon: this.icon[success],
         message: message,
-        timeout: 2500
+        timeout: 2500,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 <style>

@@ -5,19 +5,7 @@
   >
     <div class="container-fluid">
       <div class="navbar-wrapper">
-        <div class="navbar-toggle d-inline" :class="{ toggled: $sidebar.showSidebar }">
-          <button
-            type="button"
-            class="navbar-toggler"
-            aria-label="Navbar toggle button"
-            @click="toggleSidebar"
-          >
-            <span class="navbar-toggler-bar bar1"></span>
-            <span class="navbar-toggler-bar bar2"></span>
-            <span class="navbar-toggler-bar bar3"></span>
-          </button>
-        </div>
-        <a class="navbar-brand" href="#pablo">{{ routeName }}</a>
+        <a class="navbar-brand" href="#">{{ routeName }}</a>
       </div>
       <button
         class="navbar-toggler"
@@ -36,24 +24,6 @@
       <collapse-transition>
         <div class="collapse navbar-collapse show" v-show="showMenu">
           <ul class="navbar-nav ml-auto">
-            <base-dropdown tag="li" menu-on-right title-tag="a" class="nav-item">
-              <a
-                slot="title"
-                href="#"
-                class="dropdown-toggle nav-link"
-                data-toggle="dropdown"
-                aria-expanded="true"
-              >
-                <i class="tim-icons icon-cart"></i>
-                <p class="d-lg-none">Transaction</p>
-              </a>
-              <li class="nav-link">
-                <router-link
-                  class="nav-item dropdown-item"
-                  :to="{ name: 'transaction' }"
-                >Ajouter une transaction</router-link>
-              </li>
-            </base-dropdown>
             <base-dropdown
               tag="li"
               menu-on-right
@@ -69,17 +39,21 @@
                 aria-expanded="true"
               >
                 <i class="tim-icons icon-badge"></i>
-                <p class="d-lg-none">Log out</p>
+                <p class="d-lg-none">Authentification</p>
               </a>
               <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Profile</a>
+                <router-link
+                  class="nav-item dropdown-item"
+                  :to="{ name: 'register' }"
+                  >Register</router-link
+                >
               </li>
               <li class="nav-link">
-                <a href="#" class="nav-item dropdown-item">Settings</a>
-              </li>
-              <div class="dropdown-divider"></div>
-              <li class="nav-link">
-                <a href @click.prevent="logOut" class="nav-item dropdown-item">Log out</a>
+                <router-link
+                  class="nav-item dropdown-item"
+                  :to="{ name: 'login' }"
+                  >Login</router-link
+                >
               </li>
             </base-dropdown>
           </ul>
@@ -95,19 +69,19 @@ import Modal from "@/components/Modal";
 export default {
   components: {
     CollapseTransition,
-    Modal
+    Modal,
   },
   computed: {
     routeName() {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
-    }
+    },
   },
   data() {
     return {
       showMenu: false,
       searchModalVisible: false,
-      searchQuery: ""
+      searchQuery: "",
     };
   },
   methods: {
@@ -120,20 +94,10 @@ export default {
     closeDropDown() {
       this.activeNotifications = false;
     },
-    toggleSidebar() {
-      this.$sidebar.displaySidebar(!this.$sidebar.showSidebar);
-    },
-    hideSidebar() {
-      this.$sidebar.displaySidebar(false);
-    },
     toggleMenu() {
       this.showMenu = !this.showMenu;
-    },
-    logOut() {
-      this.$store.dispatch("auth/logout");
-      this.$router.push("/login");
     }
-  }
+  },
 };
 </script>
 <style>

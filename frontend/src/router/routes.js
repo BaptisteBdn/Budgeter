@@ -1,4 +1,6 @@
 import DashboardLayout from "@/layout/dashboard/DashboardLayout.vue";
+import LoginLayout from "@/layout/login/LoginLayout.vue";
+
 // GeneralViews
 import NotFound from "@/pages/NotFoundPage.vue";
 
@@ -10,6 +12,23 @@ const Login = () => import(/* webpackChunkName: "common" */ "@/pages/Login.vue")
 const Register = () => import(/* webpackChunkName: "common" */ "@/pages/Register.vue");
 
 const routes = [
+  {
+    path: "/",
+    component: LoginLayout,
+    redirect: "/login",
+    children: [
+      {
+        path: "login",
+        name: "login",
+        component: Login
+      },
+      {
+        path: "register",
+        name: "register",
+        component: Register
+      }
+    ]
+  },
   {
     path: "/",
     component: DashboardLayout,
@@ -29,16 +48,6 @@ const routes = [
         path: "transaction",
         name: "transaction",
         component: AddTransactions
-      },
-      {
-        path: "login",
-        name: "login",
-        component: Login
-      },
-      {
-        path: "register",
-        name: "register",
-        component: Register
       }
     ]
   },
