@@ -47,11 +47,7 @@
         </div>
       </div>
       <div class="form-group">
-        <button class="btn btn-primary btn-block" :disabled="loading">
-          <span
-            v-show="loading"
-            class="spinner-border spinner-border-sm"
-          ></span>
+        <button class="btn btn-primary btn-block">
           <span>Login</span>
         </button>
       </div>
@@ -68,7 +64,6 @@ export default {
   data() {
     return {
       user: new User("", ""),
-      loading: false,
       type: ["danger", "success"],
       icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"],
     };
@@ -85,10 +80,8 @@ export default {
   },
   methods: {
     handleLogin() {
-      this.loading = true;
       this.$validator.validateAll().then((isValid) => {
         if (!isValid) {
-          this.loading = false;
           return;
         }
 
@@ -98,7 +91,6 @@ export default {
               this.$router.push("/dashboard");
             },
             (error) => {
-              this.loading = false;
               this.notifyVue(
                 "bottom",
                 "center",

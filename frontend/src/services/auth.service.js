@@ -1,8 +1,8 @@
-import Api from '@/services/api'
+import api from '@/services/api'
 
 class AuthService {
   login(user) {
-    return Api()
+    return api()
       .post('/api/auth/signin', {
         username: user.username,
         password: user.password
@@ -21,7 +21,7 @@ class AuthService {
   }
 
   register(user) {
-    return Api().post('/api/auth/signup', {
+    return api().post('/api/auth/signup', {
       username: user.username,
       password: user.password
     });

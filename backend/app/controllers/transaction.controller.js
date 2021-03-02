@@ -15,6 +15,14 @@ exports.create = (req, res) => {
         return;
     }
 
+    if (!req.body.credit && !req.body.debit) {
+        res.status(400).send({
+            message: "Content needs credit or debit!"
+        });
+        return;
+    }
+
+
     // Create a Transaction
     const transaction = {
         date: req.body.date,

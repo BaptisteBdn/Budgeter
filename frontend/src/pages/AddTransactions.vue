@@ -2,124 +2,187 @@
   <div class="row">
     <div class="col-12" style="font-weight: bold">
       <card>
-        <b-form-group
-          label="DATE:"
-          label-for="nested-date"
-          label-align-sm="right"
-          label-cols-sm="1"
-        >
-          <b-form-input
-            id="nested-date"
-            type="date"
-            v-model="currentDate"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          label="DEBIT:"
-          label-for="nested-debit"
-          label-align-sm="right"
-          label-cols-sm="1"
-        >
-          <b-form-input v-model="debit" id="nested-debit"></b-form-input>
-        </b-form-group>
-        <b-form-group
-          label="CREDIT:"
-          label-for="nested-credit"
-          label-align-sm="right"
-          label-cols-sm="1"
-        >
-          <b-form-input v-model="credit" id="nested-credit"></b-form-input>
-        </b-form-group>
-        <b-form-group
-          label="COMPTE:"
-          label-for="nested-account"
-          label-align-sm="right"
-          label-cols-sm="1"
-        >
-          <b-form-select
-            class="form-control"
-            style="background-color: #27293d"
-            v-model="account"
-            :options="accountOptions"
-            id="nested-account"
-          ></b-form-select>
-        </b-form-group>
-        <b-form-group
-          label="BENEFICIAIRE/EMETTEUR:"
-          label-for="nested-destination"
-          label-align-sm="right"
-          label-cols-sm="1"
-        >
-          <b-form-input
-            v-model="destination"
-            id="nested-destination"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          label="CATEGORIE:"
-          label-for="nested-category"
-          label-align-sm="right"
-          label-cols-sm="1"
-        >
-          <b-form-select
-            class="form-control"
-            style="background-color: #27293d"
-            v-model="category"
-            :options="categoryOptions"
-            id="nested-category"
-          ></b-form-select>
-        </b-form-group>
-        <b-form-group
-          label="SOUS-CATEGORIE:"
-          label-for="nested-subcategory"
-          label-align-sm="right"
-          label-cols-sm="1"
-        >
-          <b-form-select
-            class="form-control"
-            style="background-color: #27293d"
-            v-model="subcategory"
-            :options="subcategoryOptions"
-            id="nested-subcategory"
-          ></b-form-select>
-        </b-form-group>
-        <b-form-group
-          label="COMMENTAIRE:"
-          label-for="nested-comment"
-          label-align-sm="right"
-          label-cols-sm="1"
-        >
-          <b-form-input v-model="comment" id="nested-comment"></b-form-input>
-        </b-form-group>
-        <div class="text-center">
-          <b-button
-            @click="validate()"
-            class="center btn btn-sm btn-primary btn-simple"
+        <form name="form" @submit.prevent="handleAddTransaction">
+          <b-form-group
+            label="DATE:"
+            label-for="nested-date"
+            label-align-sm="right"
+            label-cols-sm="1"
           >
-            Ajouter
-          </b-button>
-        </div>
+            <b-form-input
+              id="nested-date"
+              type="date"
+              v-model="transaction.date"
+              v-validate="'required'"
+              name="date"
+            ></b-form-input>
+            <div
+              v-if="errors.has('date')"
+              class="alert alert-danger small"
+              role="alert"
+            >
+              Date is required!
+            </div>
+          </b-form-group>
+          <b-form-group
+            label="DEBIT:"
+            label-for="nested-debit"
+            label-align-sm="right"
+            label-cols-sm="1"
+          >
+            <b-form-input
+              id="nested-debit"
+              type="number"
+              v-model="transaction.debit"
+              v-validate="{ rules: { required: this.isDebitRequired } }"
+              step="0.01"
+              min="0"
+              name="debit"
+            ></b-form-input>
+            <div
+              v-if="errors.has('debit')"
+              class="alert alert-danger small"
+              role="alert"
+            >
+              Debit is required!
+            </div>
+          </b-form-group>
+          <b-form-group
+            label="CREDIT:"
+            label-for="nested-credit"
+            label-align-sm="right"
+            label-cols-sm="1"
+          >
+            <b-form-input
+              id="nested-credit"
+              type="number"
+              v-model="transaction.credit"
+              v-validate="{ rules: { required: this.isCreditRequired } }"
+              step="0.01"
+              min="0"
+              name="credit"
+            ></b-form-input>
+            <div
+              v-if="errors.has('credit')"
+              class="alert alert-danger small"
+              role="alert"
+            >
+              Credit is required!
+            </div>
+          </b-form-group>
+          <b-form-group
+            label="COMPTE:"
+            label-for="nested-account"
+            label-align-sm="right"
+            label-cols-sm="1"
+          >
+            <b-form-select
+              class="form-control"
+              style="background-color: #27293d"
+              :options="accountOptions"
+              v-model="transaction.account"
+              v-validate="'required'"
+              name="account"
+              id="nested-account"
+            ></b-form-select>
+            <div
+              v-if="errors.has('account')"
+              class="alert alert-danger small"
+              role="alert"
+            >
+              Account is required!
+            </div>
+          </b-form-group>
+          <b-form-group
+            label="BENEFICIAIRE/EMETTEUR:"
+            label-for="nested-destination"
+            label-align-sm="right"
+            label-cols-sm="1"
+          >
+            <b-form-input
+              id="nested-destination"
+              v-model="transaction.destination"
+              name="destination"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group
+            label="CATEGORIE:"
+            label-for="nested-category"
+            label-align-sm="right"
+            label-cols-sm="1"
+          >
+            <b-form-select
+              class="form-control"
+              style="background-color: #27293d"
+              :options="categoryOptions"
+              v-model="transaction.category"
+              v-validate="'required'"
+              name="category"
+              id="nested-category"
+            ></b-form-select>
+            <div
+              v-if="errors.has('category')"
+              class="alert alert-danger small"
+              role="alert"
+            >
+              Category is required!
+            </div>
+          </b-form-group>
+          <b-form-group
+            label="SOUS-CATEGORIE:"
+            label-for="nested-subcategory"
+            label-align-sm="right"
+            label-cols-sm="1"
+          >
+            <b-form-select
+              class="form-control"
+              style="background-color: #27293d"
+              :options="subcategoryOptions"
+              v-model="transaction.subcategory"
+              v-validate="'required'"
+              name="subcategory"
+              id="nested-subcategory"
+            ></b-form-select>
+            <div
+              v-if="errors.has('subcategory')"
+              class="alert alert-danger small"
+              role="alert"
+            >
+              Subcategory is required!
+            </div>
+          </b-form-group>
+          <b-form-group
+            label="COMMENTAIRE:"
+            label-for="nested-comment"
+            label-align-sm="right"
+            label-cols-sm="1"
+          >
+            <b-form-input
+              id="nested-comment"
+              v-model="transaction.comment"
+              name="comment"
+            ></b-form-input>
+          </b-form-group>
+          <div class="text-center">
+            <button class="center btn btn-sm btn-primary btn-simple">
+              <span>Ajouter</span>
+            </button>
+          </div>
+        </form>
       </card>
     </div>
   </div>
 </template>
 
 <script>
+import Transaction from "../models/transaction";
 import NotificationTemplate from "./Notifications/NotificationTemplate";
+
 export default {
   data() {
     return {
-      currentDate: new Date().toISOString().substr(0, 10),
-      debit: null,
-      credit: null,
-      account: null,
-      destination: null,
-      category: null,
-      subcategory: null,
-      comment: null,
-      accountOptions: [
-        { value: "card", text: "Carte" },
-      ],
+      transaction: new Transaction(this.currentDate()),
+      accountOptions: [{ value: "card", text: "Carte" }],
       categoryOptions: [
         { value: "hobbies", text: "Culture & Sport" },
         { value: "health", text: "Santé & Bien-être" },
@@ -136,16 +199,46 @@ export default {
       ],
     };
   },
+  computed: {
+    isCreditRequired() {
+      if (this.transaction.debit === null) return true;
+      return false;
+    },
+    isDebitRequired() {
+      if (this.transaction.credit === null) return true;
+      return false;
+    },
+  },
   methods: {
-    validate() {
-      this.debit = null;
-      this.credit = null;
-      this.account = null;
-      this.destination = null;
-      this.category = null;
-      this.subcategory = null;
-      this.comment = null;
-      this.notifyVue("bottom", "center", 1);
+    currentDate() {
+      return new Date().toISOString().substr(0, 10);
+    },
+    handleAddTransaction() {
+      this.$validator.validateAll().then((isValid) => {
+        if (!isValid) {
+          return;
+        }
+
+        this.$store
+          .dispatch("transaction/createTransaction", this.transaction)
+          .then(
+            (data) => {
+              this.$validator.reset();
+              this.transaction = new Transaction(this.currentDate());
+              this.notifyVue("bottom", "center", 1, data.message);
+            },
+            (error) => {
+              this.notifyVue(
+                "bottom",
+                "center",
+                0,
+                (error.response && error.response.data.message) ||
+                  error.message ||
+                  error.toString()
+              );
+            }
+          );
+      });
     },
     notifyVue(verticalAlign, horizontalAlign, success) {
       this.$notify({
@@ -157,7 +250,7 @@ export default {
         message: this.message[success],
         timeout: 2500,
       });
-    }
+    },
   },
 };
 </script>
