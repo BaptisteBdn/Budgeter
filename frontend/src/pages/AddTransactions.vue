@@ -163,8 +163,24 @@
               name="comment"
             ></b-form-input>
           </b-form-group>
+
+          <b-form-group
+            label="POUR:"
+            label-for="nested-who"
+            label-align-sm="right"
+            label-cols-sm="1"
+          >
+            <b-form-checkbox-group
+              id="nested-who"
+              v-model="transaction.who"
+              :options="whoOptions"
+              name="who"
+              buttons
+              button-variant="btn btn-sm btn-primary btn-simple"
+            ></b-form-checkbox-group>
+          </b-form-group>
           <div class="text-center">
-            <button class="center btn btn-sm btn-primary btn-simple">
+            <button class="center btn btn-primary btn-block">
               <span>Ajouter</span>
             </button>
           </div>
@@ -191,6 +207,7 @@ export default {
         { value: "videogames", text: "Jeux Vidéos" },
         { value: "cosmetics", text: "Cosmétiques" },
       ],
+      whoOptions: [],
       type: ["danger", "success"],
       icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"],
       message: [
@@ -209,6 +226,21 @@ export default {
       return false;
     },
   },
+  created() {
+    this.$store.dispatch("user/getUsernames").then(
+      (usernames) => {
+        this.whoOptions = usernames.data.map((u) => {
+          if (u.currentUser) {
+            this.transaction.who = [u.id];
+          }
+          return { text: u.username, value: u.id };
+        });
+      },
+      (error) => {
+        this.notifyVue(0);
+      }
+    );
+  },
   methods: {
     currentDate() {
       return new Date().toISOString().substr(0, 10);
@@ -225,26 +257,19 @@ export default {
             (data) => {
               this.$validator.reset();
               this.transaction = new Transaction(this.currentDate());
-              this.notifyVue("bottom", "center", 1, data.message);
+              this.notifyVue(1);
             },
             (error) => {
-              this.notifyVue(
-                "bottom",
-                "center",
-                0,
-                (error.response && error.response.data.message) ||
-                  error.message ||
-                  error.toString()
-              );
+              this.notifyVue(0);
             }
           );
       });
     },
-    notifyVue(verticalAlign, horizontalAlign, success) {
+    notifyVue(success) {
       this.$notify({
         component: NotificationTemplate,
-        horizontalAlign: horizontalAlign,
-        verticalAlign: verticalAlign,
+        horizontalAlign: "center",
+        verticalAlign: "bottom",
         type: this.type[success],
         icon: this.icon[success],
         message: this.message[success],

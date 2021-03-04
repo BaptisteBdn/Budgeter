@@ -1,9 +1,8 @@
 const db = require("../models");
 const { Op } = require("sequelize");
-const { user } = require("../models");
+const userController = require("../controllers/user.controller");
+const transactionController = require("../controllers/transaction.controller");
 const Transaction = db.transactions;
-const Family = db.family;
-const User = db.user;
 
 // Create and Save a new Transaction
 exports.create = (req, res) => {
@@ -103,6 +102,28 @@ exports.findById = (req, res) => {
         });
 };
 
+// Get the balance between all the users
+exports.getBalance = (req, res) => {
+    userController.getUsersInfos(req, res)
+        .then(usersInfo => {
+            let users = new Map();
+            usersInfo.forEach(member => users.set(member.id, new UserBalance(member.username)));
+            const attributes = ['credit', 'debit', 'who', 'userId']
+            transactionController.getTransactionsUsers(req, res, usersInfo.map(user => user.id), attributes)
+                .then(transactions => {
+                    transactions.forEach(transaction => {
+                        if (transaction.debit != null) {
+                            users.get(transaction.userId).addTotalPayed(transaction.debit);
+                            transaction.who.forEach(userId =>
+                                users.get(userId).addTotalToPay(transaction.debit / transaction.who.length)
+                            );
+                        }
+                    });
+                    res.send({ users: [...users] });
+                });
+        })
+}
+
 // Update a Transaction by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
@@ -169,3 +190,24 @@ exports.deleteAll = (req, res) => {
             });
         });
 };
+
+
+class UserBalance {
+    constructor(username) {
+        this.username = username;
+        this.totalPayed = 0;
+        this.totalToPay = 0;
+    }
+
+    substractTotalPayed(amount) {
+        this.totalPayed -= amount;
+    }
+
+    addTotalPayed(amount) {
+        this.totalPayed += amount;
+    }
+
+    addTotalToPay(amount) {
+        this.totalToPay += amount;
+    }
+}

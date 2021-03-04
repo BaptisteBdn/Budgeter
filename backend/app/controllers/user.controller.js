@@ -2,32 +2,9 @@ const { family } = require("../models");
 const db = require("../models");
 const User = db.user;
 
-exports.addFamily = (req, res) => {
-    const familyId = req.params.id;
-    User.update({ familyId: familyId }, {
-        where: { id: req.userId }
-    })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "User was updated successfully."
-                });
-            } else {
-                res.send({
-                    message: `Cannot update User with id=${id}. Maybe User was not found !`
-                });
-            }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating User with id=" + id
-            });
-        });
-};
-
-// Return the familyId of the current user
-exports.getCurrentUserInfos = (req, res) => {
+exports.getUserInfos = (req, res) => {
     return User.findAll({
+        attributes: ['id', 'username'],
         where: { id: req.userId },
         raw: true
     })
@@ -43,11 +20,10 @@ exports.getCurrentUserInfos = (req, res) => {
 };
 
 
-// Get users infos from the same family
-exports.getFamilyUsers = (req, res, familyId) => {
+// Get all users infos
+exports.getUsersInfos = (req, res) => {
     return User.findAll({
         attributes: ['id', 'username'],
-        where: { familyId: familyId },
         raw: true
     })
         .then(data => {
@@ -61,45 +37,16 @@ exports.getFamilyUsers = (req, res, familyId) => {
         });
 }
 
-// Return the userId of the family of the current user
-exports.getFamilyUsersFromCurrentUser = (req, res) => {
-    return this.getFamilyFromCurrentUser(req, res).then(family => {
-        return User.findAll({
-            attributes: ['id'],
-            where: { familyId: family[0].familyId },
-            raw: true
-        })
-            .then(data => {
-                return data;
-            })
-            .catch(err => {
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while retrieving user."
-                });
-            });
-    });
-};
-
-exports.removeFamily = (req, res) => {
-    User.update({ familyId: null }, {
-        where: { id: req.userId }
-    })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "User was updated successfully."
-                });
-            } else {
-                res.send({
-                    message: `Cannot update User with id=${id}. Maybe User was not found !`
-                });
+exports.getUsernames = (req, res) => {
+    this.getUsersInfos(req, res).then(data => {
+        res.send(data.map(function (user) {
+            return {
+                "id": user.id,
+                "username": user.username,
+                "currentUser" : user.id === req.userId
             }
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error updating User with id=" + id
-            });
-        });
-};
+        }));
+    });
 
+
+}

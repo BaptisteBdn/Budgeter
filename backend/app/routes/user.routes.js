@@ -13,9 +13,6 @@ module.exports = function (app) {
 
     app.use('/api/user', [authJwt.verifyToken], router);
 
-    // Add family to user
-    router.post("/family/:id", user.addFamily);
-
-    // Remove family from user
-    router.delete("/family/:id", user.removeFamily);
+      // Retrieve all Transaction
+    router.get("/usernames", user.getUsernames);
 };
