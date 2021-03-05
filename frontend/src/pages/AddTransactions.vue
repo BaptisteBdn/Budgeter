@@ -116,6 +116,7 @@
               style="background-color: #27293d"
               :options="categoryOptions"
               v-model="transaction.category"
+              v-on:input="updateSubcategories"
               v-validate="'required'"
               name="category"
               id="nested-category"
@@ -199,14 +200,8 @@ export default {
     return {
       transaction: new Transaction(this.currentDate()),
       accountOptions: [{ value: "card", text: "Carte" }],
-      categoryOptions: [
-        { value: "hobbies", text: "Culture & Sport" },
-        { value: "health", text: "Santé & Bien-être" },
-      ],
-      subcategoryOptions: [
-        { value: "videogames", text: "Jeux Vidéos" },
-        { value: "cosmetics", text: "Cosmétiques" },
-      ],
+      categoryOptions: [],
+      subcategoryOptions: [],
       whoOptions: [],
       type: ["danger", "success"],
       icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"],
@@ -227,23 +222,48 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("user/getUsernames").then(
-      (usernames) => {
-        this.whoOptions = usernames.data.map((u) => {
-          if (u.currentUser) {
-            this.transaction.who = [u.id];
-          }
-          return { text: u.username, value: u.id };
-        });
-      },
-      (error) => {
-        this.notifyVue(0);
-      }
-    );
+    this.getUsernames();
+    this.getCategories();
   },
   methods: {
     currentDate() {
       return new Date().toISOString().substr(0, 10);
+    },
+    getUsernames() {
+      this.$store.dispatch("user/getUsernames").then(
+        (usernames) => {
+          this.whoOptions = usernames.data.map((u) => {
+            if (u.currentUser) {
+              this.transaction.who = [u.id];
+            }
+            return { text: u.username, value: u.id };
+          });
+        },
+        (error) => {
+          this.notifyVue(0);
+        }
+      );
+    },
+    getCategories() {
+      this.$store.dispatch("category/getCategories").then(
+        (category) => {
+          this.categoryOptions = category.data;
+          this.transaction.category = category.data[0];
+        },
+        (error) => {
+          this.notifyVue(0);
+        }
+      );
+    },
+    updateSubcategories() {
+      this.$store.dispatch("category/getSubcategories", this.transaction.category).then(
+        (sub) => {
+          this.subcategoryOptions = sub.data;
+        },
+        (error) => {
+          this.notifyVue(0);
+        }
+      );
     },
     handleAddTransaction() {
       this.$validator.validateAll().then((isValid) => {

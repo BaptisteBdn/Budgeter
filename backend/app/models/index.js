@@ -13,6 +13,7 @@ db.sequelize = sequelize;
 
 db.transactions = require("./transaction.model.js")(sequelize, Sequelize);
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
+db.category = require("../models/category.model.js")(sequelize, Sequelize);
 
 db.user.hasMany(db.transactions, { as: "transactions" });
 db.transactions.belongsTo(db.user, {
