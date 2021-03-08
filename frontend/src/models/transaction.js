@@ -1,13 +1,14 @@
 export default class Transaction {
-  constructor(date) {
+  constructor(date, category, who) {
+    this.id = -1;
     this.date = date;
     this.debit = null;
     this.credit = null;
     this.account = "";
     this.destination = "";
-    this.category = "";
+    this.category = category;
     this.subcategory = "";
     this.comment = "";
-    this.who = [];
+    this.who = who;
   }
 }

@@ -51,6 +51,29 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
     Transaction.findAll({
         attributes: { exclude: ['createdAt', 'updatedAt', 'userId'] },
+        order: [
+            ['date', 'DESC'],
+            ['id', 'DESC']
+        ]
+    })
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving transactions."
+            });
+        });
+};
+
+exports.findAllFromUser = (req, res) => {
+    Transaction.findAll({
+        attributes: { exclude: ['createdAt', 'updatedAt', 'userId'] },
+        order: [
+            ['date', 'DESC'],
+            ['id', 'DESC']
+        ],
         where: { userId: req.userId }
     })
         .then(data => {
@@ -63,6 +86,7 @@ exports.findAll = (req, res) => {
             });
         });
 };
+
 
 // Retrieve all Transactions for specified users.
 exports.getTransactionsUsers = (req, res, users, attributes) => {
@@ -113,9 +137,14 @@ exports.getBalance = (req, res) => {
                 .then(transactions => {
                     transactions.forEach(transaction => {
                         if (transaction.debit != null) {
+                            if (transaction.who.length === 0 || transaction.who.length === 1 && transaction.who[0] === transaction.userId) {
+                                return;
+                            }
                             users.get(transaction.userId).addTotalPayed(transaction.debit);
-                            transaction.who.forEach(userId =>
+                            transaction.who.forEach(userId => {                            
                                 users.get(userId).addTotalToPay(transaction.debit / transaction.who.length)
+                            }
+
                             );
                         }
                     });

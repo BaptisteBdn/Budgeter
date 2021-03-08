@@ -17,7 +17,10 @@ module.exports = app => {
   router.post("/", transactions.create);
 
   // Retrieve all Transaction
-  router.get("/", transactions.findAll);
+  router.get("/", transactions.findAllFromUser);
+
+  // Retrieve all Transaction
+  router.get("/family", transactions.findAll);
 
   // Retrieve balance between users
   router.get("/balance", transactions.getBalance);

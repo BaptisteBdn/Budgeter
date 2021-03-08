@@ -18,6 +18,10 @@ class TransactionService {
     getUserTransaction() {
         return api().get('/api/transactions');
     }
+
+    deleteTransaction(id) {
+        return api().delete(`/api/transactions/${id}`);
+    }
 }
 
 export default new TransactionService();
