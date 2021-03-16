@@ -68,6 +68,12 @@ exports.findAll = (req, res) => {
 };
 
 exports.findAllFromUser = (req, res) => {
+    var users = userController.getUsersInfos().then(users => {
+        let usersMap = new Map(); 
+        users.forEach(member => usersMap.set(member.id, member.username));
+        return usersMap;
+    })
+
     Transaction.findAll({
         attributes: { exclude: ['createdAt', 'updatedAt', 'userId'] },
         order: [
@@ -77,7 +83,14 @@ exports.findAllFromUser = (req, res) => {
         where: { userId: req.userId }
     })
         .then(data => {
-            res.send(data);
+            users.then(usersMap => {
+                data.forEach(transaction => {
+                    let whoUsernames = transaction.who.map(userId => usersMap.get(userId));
+                    transaction.who = whoUsernames.join(", ");
+                });
+                res.send(data);
+            });
+            
         })
         .catch(err => {
             res.status(500).send({
@@ -141,7 +154,7 @@ exports.getBalance = (req, res) => {
                                 return;
                             }
                             users.get(transaction.userId).addTotalPayed(transaction.debit);
-                            transaction.who.forEach(userId => {                            
+                            transaction.who.forEach(userId => {
                                 users.get(userId).addTotalToPay(transaction.debit / transaction.who.length)
                             }
 

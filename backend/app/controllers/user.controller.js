@@ -46,6 +46,4 @@ exports.getUsernames = (req, res) => {
             }
         }));
     });
-
-
 }

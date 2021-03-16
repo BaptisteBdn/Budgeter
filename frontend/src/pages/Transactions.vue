@@ -139,6 +139,10 @@ export default {
           label: "Commentaire",
         },
         {
+          key: "who",
+          label: "pour",
+        },
+        {
           key: "actions",
           label: "Actions",
         },
