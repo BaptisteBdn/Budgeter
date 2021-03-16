@@ -26,7 +26,12 @@ exports.getUsersInfos = (req, res) => {
         raw: true
     })
         .then(data => {
-            return data;
+            return data.map(user => {
+                return {
+                    "id": user.id,
+                    "username": user.username.toUpperCase()
+                }
+            });
         })
         .catch(err => {
             res.status(500).send({
@@ -41,7 +46,7 @@ exports.getUsernames = (req, res) => {
         res.send(data.map(function (user) {
             return {
                 "id": user.id,
-                "username": user.username,
+                "username": user.username.toUpperCase(),
                 "currentUser" : user.id === req.userId
             }
         }));

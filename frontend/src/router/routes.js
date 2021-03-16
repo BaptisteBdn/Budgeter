@@ -7,6 +7,7 @@ import NotFound from "@/pages/NotFoundPage.vue";
 // Admin pages
 const Dashboard = () => import(/* webpackChunkName: "dashboard" */"@/pages/Dashboard.vue");
 const Transactions = () => import(/* webpackChunkName: "common" */ "@/pages/Transactions.vue");
+const Balance = () => import(/* webpackChunkName: "common" */ "@/pages/Balance.vue");
 const Login = () => import(/* webpackChunkName: "common" */ "@/pages/Login.vue");
 const Register = () => import(/* webpackChunkName: "common" */ "@/pages/Register.vue");
 
@@ -42,6 +43,11 @@ const routes = [
         path: "transactions",
         name: "transactions",
         component: Transactions
+      },
+      {
+        path: "balance",
+        name: "balance",
+        component: Balance
       }
     ]
   },

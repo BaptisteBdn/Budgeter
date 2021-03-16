@@ -40,6 +40,11 @@ class TransactionService {
     deleteTransaction(id) {
         return api().delete(`/api/transactions/${id}`);
     }
+
+    getBalance() {
+        return api().get('/api/transactions/balance');
+    }
+    
 }
 
 export default new TransactionService();

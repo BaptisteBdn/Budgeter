@@ -69,7 +69,7 @@ exports.findAll = (req, res) => {
 
 exports.findAllFromUser = (req, res) => {
     var users = userController.getUsersInfos().then(users => {
-        let usersMap = new Map(); 
+        let usersMap = new Map();
         users.forEach(member => usersMap.set(member.id, member.username));
         return usersMap;
     })
@@ -90,7 +90,7 @@ exports.findAllFromUser = (req, res) => {
                 });
                 res.send(data);
             });
-            
+
         })
         .catch(err => {
             res.status(500).send({
@@ -156,12 +156,19 @@ exports.getBalance = (req, res) => {
                             users.get(transaction.userId).addTotalPayed(transaction.debit);
                             transaction.who.forEach(userId => {
                                 users.get(userId).addTotalToPay(transaction.debit / transaction.who.length)
-                            }
-
-                            );
+                            });
                         }
                     });
-                    res.send({ users: [...users] });
+
+                    let labels = [];
+                    let data = [];
+                    
+                    users.forEach((value, key) => {
+                        labels.push(value.username);
+                        data.push(value.totalPayed - value.totalToPay);
+                    })
+
+                    res.send({ labels: labels, data: data });
                 });
         })
 }

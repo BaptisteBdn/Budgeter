@@ -114,7 +114,11 @@
     "title": "budgeter",
     "shortTitle": "BDG",
     "dashboard": "dashboard",
-    "transactions": "transactions"
+    "transactions": "transactions",
+    "balance": "balance"
+  },
+  "balance": {
+    "title": "Balance"
   },
   "transactions": {
     "add": {

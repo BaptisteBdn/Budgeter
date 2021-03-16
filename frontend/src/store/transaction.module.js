@@ -53,5 +53,15 @@ export const transaction = {
         }
       );
     },
+    getBalance({ commit }) {
+      return TransactionService.getBalance().then(
+        transaction => {
+          return Promise.resolve(transaction);
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
+    },
   }
 };

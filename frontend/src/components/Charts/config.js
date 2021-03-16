@@ -218,5 +218,48 @@ export let barChartOptions = {
       }
     }]
   }
+}
+
+export let BalanceBarChartOptions = {
+  ...basicOptions,
+  tooltips: {
+    enabled: false
+  },
+  scales: {
+    yAxes: [{
+      gridLines: {
+        drawBorder: false,
+        color: 'rgba(29,140,248,0.1)',
+        zeroLineColor: "transparent",
+      },
+      ticks: {
+        suggestedMin: 60,
+        suggestedMax: 120,
+        padding: 25,
+        fontColor: "#9e9e9e"
+      }
+    }],
+    xAxes: [{
+      position: 'top',
+      gridLines: {
+        drawBorder: true,
+        color: 'rgba(29,140,248,0.1)',
+        zeroLineColor: "transparent",
+      },
+      ticks: {
+        beginAtZero: true,
+        padding: 25
+      }
+    }]
+  },
+  plugins: {
+    datalabels: {
+      color: "white",
+      font: {
+        weight: "bold",
+        size: 16
+      },
+    },
+  },
 
 }

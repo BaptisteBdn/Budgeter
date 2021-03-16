@@ -4,12 +4,12 @@
       <div class="col-12">
         <card type="addtransaction" v-if="showAddTransaction">
           <template slot="header">
-            <h6 class="title d-inline" v-if="!showUpdate">
+            <h4 class="title d-inline" v-if="!showUpdate">
               {{ $t("transactions.add.title") }}
-            </h6>
-            <h6 class="title d-inline" v-if="showUpdate">
+            </h4>
+            <h4 class="title d-inline" v-if="showUpdate">
               {{ $t("transactions.update.title") }}
-            </h6>
+            </h4>
             <base-dropdown
               menu-on-right=""
               tag="div"
@@ -38,7 +38,7 @@
       <div class="col-12">
         <card type="addtransaction">
           <template slot="header">
-            <h6 class="title d-inline">Transactions</h6>
+            <h4 class="title d-inline">Transactions</h4>
             <base-dropdown
               menu-on-right=""
               tag="div"
