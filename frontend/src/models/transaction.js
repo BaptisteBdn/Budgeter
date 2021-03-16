@@ -1,14 +1,22 @@
 export default class Transaction {
-  constructor(date, category, who) {
-    this.id = -1;
+  constructor(id, date, credit, debit, account, destination, category, subcategory, comment, who) {
+    this.id = id;
     this.date = date;
-    this.debit = null;
-    this.credit = null;
-    this.account = "";
-    this.destination = "";
+    this.credit = credit;
+    this.debit = debit;
+    this.account = account;
+    this.destination = destination;
     this.category = category;
-    this.subcategory = "";
-    this.comment = "";
+    this.subcategory = subcategory;
+    this.comment = comment;
     this.who = who;
+  }
+
+  static DateInstance(date) {
+    return new Transaction(-1, date, null, null, "", "", "", "", "", []);
+  }
+
+  static DateWhoInstance(date, who) {
+    return new Transaction(-1, date, null, null, "", "", "", "", "", who);
   }
 }

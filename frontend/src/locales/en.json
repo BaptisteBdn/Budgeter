@@ -115,5 +115,13 @@
     "shortTitle": "BDG",
     "dashboard": "dashboard",
     "transactions": "transactions"
+  },
+  "transactions": {
+    "add": {
+      "title": "Add transaction"
+    },
+    "update": {
+      "title": "Update transaction"
+    }
   }
 }

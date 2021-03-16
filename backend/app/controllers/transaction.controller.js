@@ -157,6 +157,14 @@ exports.getBalance = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
+    if (req.body.credit === "") {
+        req.body.credit = null;
+    }
+
+    if (req.body.debit === "") {
+        req.body.debit = null;
+    }
+
     Transaction.update(req.body, {
         where: { id: id }
     })

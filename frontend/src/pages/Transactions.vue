@@ -2,9 +2,14 @@
   <div>
     <div class="row">
       <div class="col-12">
-        <card type="addtransaction" v-if="addTransaction">
+        <card type="addtransaction" v-if="showAddTransaction">
           <template slot="header">
-            <h6 class="title d-inline">Ajouter une transaction</h6>
+            <h6 class="title d-inline" v-if="!showUpdate">
+              {{ $t("transactions.add.title") }}
+            </h6>
+            <h6 class="title d-inline" v-if="showUpdate">
+              {{ $t("transactions.update.title") }}
+            </h6>
             <base-dropdown
               menu-on-right=""
               tag="div"
@@ -22,7 +27,8 @@
           </template>
           <div>
             <add-transaction
-              @addTransaction="getTransactions"
+              @addTransaction="handleAddTransaction"
+              v-bind:currentTransactionId="currentTransactionId"
             ></add-transaction>
           </div>
         </card>
@@ -67,7 +73,7 @@
               <template #cell(actions)="row">
                 <base-button
                   type="link"
-                  @click="edit(row.index)"
+                  @click="edit(row.item)"
                   aria-label="edit button"
                 >
                   <i class="tim-icons icon-pencil"></i>
@@ -99,7 +105,9 @@ export default {
   data() {
     return {
       title: "Transactions",
-      addTransaction: false,
+      showAddTransaction: false,
+      showUpdate: true,
+      currentTransactionId: -1,
       fields: [
         {
           key: "date",
@@ -145,7 +153,6 @@ export default {
     };
   },
   created() {
-    this.addTransaction = this.$route.query.addTransaction;
     this.getTransactions();
   },
   methods: {
@@ -163,6 +170,7 @@ export default {
               category: transaction.category,
               subcategory: transaction.subcategory,
               comment: transaction.comment,
+              who: transaction.who,
             };
           });
         },
@@ -175,6 +183,12 @@ export default {
           );
         }
       );
+    },
+    handleAddTransaction(isUpdate) {
+      if (isUpdate) {
+        this.showAddTransaction = false;
+      }
+      this.getTransactions();
     },
     remove(index, item) {
       if (!confirm("Do you really want to delete?")) {
@@ -191,12 +205,20 @@ export default {
         }
       );
     },
-    edit(index) {},
+    edit(item) {
+      this.currentTransactionId = item.id;
+      this.showUpdate = true;
+      this.showAddTransaction = true;
+      this.scrollToTop();
+    },
     hideTransaction() {
-      this.addTransaction = false;
+      this.showAddTransaction = false;
     },
     showTransaction() {
-      this.addTransaction = true;
+      this.currentTransactionId = -1;
+      this.showUpdate = false;
+      this.showAddTransaction = true;
+      this.scrollToTop();
     },
     notifyVue(success, message) {
       this.$notify({
@@ -208,6 +230,9 @@ export default {
         message: message,
         timeout: 2500,
       });
+    },
+    scrollToTop() {
+      window.scrollTo(0, 0);
     },
   },
 };

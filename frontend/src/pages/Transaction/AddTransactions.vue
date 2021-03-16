@@ -26,29 +26,6 @@
       </div>
     </b-form-group>
     <b-form-group
-      label="DEBIT:"
-      label-for="nested-debit"
-      label-align-sm="right"
-      label-cols-sm="1"
-    >
-      <b-form-input
-        id="nested-debit"
-        type="number"
-        v-model="transaction.debit"
-        v-validate="{ rules: { required: this.isDebitRequired } }"
-        step="0.01"
-        min="0"
-        name="debit"
-      ></b-form-input>
-      <div
-        v-if="errors.has('debit')"
-        class="alert alert-danger small"
-        role="alert"
-      >
-        Debit is required!
-      </div>
-    </b-form-group>
-    <b-form-group
       label="CREDIT:"
       label-for="nested-credit"
       label-align-sm="right"
@@ -58,18 +35,25 @@
         id="nested-credit"
         type="number"
         v-model="transaction.credit"
-        v-validate="{ rules: { required: this.isCreditRequired } }"
         step="0.01"
         min="0"
         name="credit"
       ></b-form-input>
-      <div
-        v-if="errors.has('credit')"
-        class="alert alert-danger small"
-        role="alert"
-      >
-        Credit is required!
-      </div>
+    </b-form-group>
+    <b-form-group
+      label="DEBIT:"
+      label-for="nested-debit"
+      label-align-sm="right"
+      label-cols-sm="1"
+    >
+      <b-form-input
+        id="nested-debit"
+        type="number"
+        v-model="transaction.debit"
+        step="0.01"
+        min="0"
+        name="debit"
+      ></b-form-input>
     </b-form-group>
     <b-form-group
       label="COMPTE:"
@@ -183,7 +167,8 @@
     </b-form-group>
     <div class="text-center">
       <button class="center btn btn-primary btn-block">
-        <span>Ajouter</span>
+        <span v-if="!showUpdate">Ajouter</span>
+        <span v-if="showUpdate">Modifier</span>
       </button>
     </div>
   </form>
@@ -196,37 +181,72 @@ import NotificationTemplate from "../Notifications/NotificationTemplate";
 export default {
   data() {
     return {
-      transaction: new Transaction(this.currentDate()),
+      transaction: Transaction.DateInstance(this.currentDate()),
       currentUser: null,
       accountOptions: [{ value: "Carte", text: "Carte" }],
       categoryOptions: [],
       subcategoryOptions: [],
       whoOptions: [],
+      showUpdate: false,
       type: ["danger", "success"],
       icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"],
       message: [
         "<b> Erreur - </b> L'ajout de la transaction a échoué !",
-        "<b> Succès - </b> La transaction a bien été ajoutée !",
+        "<b> Succès - </b> La transaction a bien été validée !",
       ],
     };
   },
-  computed: {
-    isCreditRequired() {
-      if (this.transaction.debit === null) return true;
-      return false;
+  props: ["currentTransactionId"],
+  watch: {
+    currentTransactionId: function (id) {
+      if (id === -1) {
+        this.$validator.reset();
+        this.showUpdate = false;
+        this.transaction = Transaction.DateWhoInstance(this.currentDate(), [
+          this.currentUser,
+        ]);
+        this.subcategoryOptions = [];
+        return;
+      }
+      this.showUpdate = true;
+      this.getTransaction(id);
     },
-    isDebitRequired() {
-      if (this.transaction.credit === null) return true;
-      return false;
-    }
+    currentUser: function (id) {
+      this.transaction.who = [id];
+    },
   },
   created() {
-    this.getUsernames();
+    if (this.currentTransactionId != -1) {
+      this.showUpdate = true;
+      this.getTransaction(this.currentTransactionId);
+    }
     this.getCategories();
+    this.getUsernames();
   },
   methods: {
     currentDate() {
       return new Date().toISOString().substr(0, 10);
+    },
+    getTransaction(id) {
+      this.$store.dispatch("transaction/getTransaction", id).then(
+        (transaction) => {
+          this.transaction = new Transaction(
+            transaction.data.id,
+            transaction.data.date,
+            transaction.data.credit,
+            transaction.data.debit,
+            transaction.data.account,
+            transaction.data.destination,
+            transaction.data.category,
+            transaction.data.subcategory,
+            transaction.data.comment,
+            transaction.data.who
+          );
+        },
+        (error) => {
+          this.notifyVue(0);
+        }
+      );
     },
     getUsernames() {
       this.$store.dispatch("user/getUsernames").then(
@@ -234,7 +254,6 @@ export default {
           this.whoOptions = usernames.data.map((u) => {
             if (u.currentUser) {
               this.currentUser = u.id;
-              this.transaction.who = [u.id];
             }
             return { text: u.username, value: u.id };
           });
@@ -248,7 +267,6 @@ export default {
       this.$store.dispatch("category/getCategories").then(
         (category) => {
           this.categoryOptions = category.data;
-          this.transaction.category = category.data[0];
         },
         (error) => {
           this.notifyVue(0);
@@ -273,23 +291,23 @@ export default {
           return;
         }
 
-        this.$store
-          .dispatch("transaction/createTransaction", this.transaction)
-          .then(
-            (data) => {
-              this.$validator.reset();
-              this.transaction = new Transaction(
-                this.currentDate(),
-                this.categoryOptions[0],
-                [this.currentUser]
-              );
-              this.$emit('addTransaction');
-              this.notifyVue(1);
-            },
-            (error) => {
-              this.notifyVue(0);
-            }
-          );
+        let request = this.showUpdate
+          ? "transaction/updateTransaction"
+          : "transaction/createTransaction";
+
+        this.$store.dispatch(request, this.transaction).then(
+          (data) => {
+            this.$validator.reset();
+            this.transaction = Transaction.DateWhoInstance(this.currentDate(), [
+              this.currentUser,
+            ]);
+            this.$emit("addTransaction", this.showUpdate);
+            this.notifyVue(1);
+          },
+          (error) => {
+            this.notifyVue(0);
+          }
+        );
       });
     },
     notifyVue(success) {
