@@ -42,6 +42,16 @@ export const category = {
           return Promise.reject(error);
         }
       );
-    }
+    },
+    delete({ commit }, category) {
+      return CategoryService.delete(category).then(
+        category => {
+          return Promise.resolve(category);
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
+    },
   }
 };

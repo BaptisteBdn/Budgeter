@@ -94,7 +94,7 @@ export default {
             this.$validator.reset();
             this.category = new Category();
             this.getCategories();
-            this.$emit("addCategory");
+            this.$emit("refreshCategory");
             this.notifyVue(1);
           },
           (error) => {

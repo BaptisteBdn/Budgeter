@@ -216,12 +216,12 @@ export default {
     },
   },
   created() {
+    this.getCategories();
+    this.getUsernames();
     if (this.currentTransactionId != -1) {
       this.showUpdate = true;
       this.getTransaction(this.currentTransactionId);
     }
-    this.getCategories();
-    this.getUsernames();
   },
   methods: {
     currentDate() {

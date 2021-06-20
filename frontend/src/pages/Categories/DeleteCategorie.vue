@@ -2,33 +2,20 @@
   <form
     style="font-weight: bold"
     name="form"
-    @submit.prevent="handleAddCategory"
+    @submit.prevent="handleDeleteCategory"
   >
     <b-form-group
       label="CATEGORIE:"
       label-for="nested-category"
       label-align-sm="right"
       label-cols-sm="1"
-      v-if="!showSelectCategory"
-    >
-      <b-form-input
-        id="nested-category"
-        v-model="category.category"
-        name="category"
-      ></b-form-input>
-    </b-form-group>
-    <b-form-group
-      label="CATEGORIE:"
-      label-for="nested-category"
-      label-align-sm="right"
-      label-cols-sm="1"
-      v-if="showSelectCategory"
     >
       <b-form-select
         class="form-control"
         style="background-color: #27293d"
         :options="categoryOptions"
         v-model="category.category"
+        v-on:input="updateSubcategories"
         name="category"
         id="nested-category"
       ></b-form-select>
@@ -39,23 +26,18 @@
       label-align-sm="right"
       label-cols-sm="1"
     >
-      <b-form-input
-        id="nested-subcategory"
+      <b-form-select
+        class="form-control"
+        style="background-color: #27293d"
+        :options="subcategoryOptions"
         v-model="category.subcategory"
-        v-validate="'required'"
-        name="subcategory"
-      ></b-form-input>
-      <div
-        v-if="errors.has('subcategory')"
-        class="alert alert-danger small"
-        role="alert"
-      >
-        Subcategory is required!
-      </div>
+        name="category"
+        id="nested-subcategory"
+      ></b-form-select>
     </b-form-group>
     <div class="text-center">
       <button class="center btn btn-primary btn-block">
-        <span>Ajouter</span>
+        <span>Supprimer</span>
       </button>
     </div>
   </form>
@@ -70,6 +52,7 @@ export default {
     return {
       category: new Category(),
       categoryOptions: [],
+      subcategoryOptions: [],
       type: ["danger", "success"],
       icon: ["tim-icons icon-bell-55", "tim-icons icon-check-2"],
       message: [
@@ -78,23 +61,22 @@ export default {
       ],
     };
   },
-  props: ["showSelectCategory"],
   created() {
     this.getCategories();
   },
   methods: {
-    handleAddCategory() {
+    handleDeleteCategory() {
       this.$validator.validateAll().then((isValid) => {
         if (!isValid) {
           return;
         }
 
-        this.$store.dispatch("category/create", this.category).then(
+        this.$store.dispatch("category/delete", this.category).then(
           (data) => {
             this.$validator.reset();
             this.category = new Category();
             this.getCategories();
-            this.$emit("addCategory");
+            this.$emit("refreshCategory");
             this.notifyVue(1);
           },
           (error) => {
@@ -112,6 +94,18 @@ export default {
           this.notifyVue(0);
         }
       );
+    },
+    updateSubcategories() {
+      this.$store
+        .dispatch("category/getSubcategories", this.category.category)
+        .then(
+          (sub) => {
+            this.subcategoryOptions = sub.data;
+          },
+          (error) => {
+            this.notifyVue(0);
+          }
+        );
     },
     notifyVue(success) {
       this.$notify({

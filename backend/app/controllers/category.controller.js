@@ -71,7 +71,6 @@ exports.updateSubCategory = (req, res) => {
 
 exports.delete = (req, res) => {
     // Validate request
-
     if (!req.body.category || !req.body.subcategory) {
         res.status(400).send({
             message: "Content needs category and subcategory!"

@@ -19,6 +19,15 @@ class CategoryService {
     getSubcategories(category) {
         return api().get(`/api/categories/${category}`);
     }
+
+    delete(category) {
+        return api().delete('/api/categories', {
+            data: {
+                category: category.category,
+                subcategory: category.subcategory,
+            }
+        });
+    }
 }
 
 export default new CategoryService();
