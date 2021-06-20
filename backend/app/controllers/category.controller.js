@@ -29,7 +29,7 @@ exports.create = (req, res) => {
 };
 
 exports.updateCategory = (req, res) => {
-    if (!req.body.category || !req.body.subcategory) {
+    if (!req.body.category) {
         res.status(400).send({
             message: "Content needs category and subcategory!"
         });

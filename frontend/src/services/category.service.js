@@ -28,6 +28,18 @@ class CategoryService {
             }
         });
     }
+
+    updateCategorie(category, newCategory) {
+        return api().post(`/api/categories/${category}`, {
+            category: newCategory,
+        });
+    }
+
+    updateSubCategorie(category, subcategory, newSubCategory) {
+        return api().post(`/api/categories/${category}/subcategory/${subcategory}`, {
+            subcategory: newSubCategory,
+        });
+    }
 }
 
 export default new CategoryService();

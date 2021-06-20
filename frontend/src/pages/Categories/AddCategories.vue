@@ -83,7 +83,7 @@ export default {
     this.getCategories();
   },
   methods: {
-    handleDeleteCategory() {
+    handleAddCategory() {
       this.$validator.validateAll().then((isValid) => {
         if (!isValid) {
           return;

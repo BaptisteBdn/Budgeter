@@ -52,6 +52,26 @@ export const category = {
           return Promise.reject(error);
         }
       );
+    }, 
+    updateCategorie({ commit }, payload) {
+      return CategoryService.updateCategorie(payload.category, payload.newCategory).then(
+        category => {
+          return Promise.resolve(category);
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
+    },    
+    updateSubCategorie({ commit }, payload) {
+      return CategoryService.updateSubCategorie(payload.category, payload.subCategory, payload.newSubCategory).then(
+        category => {
+          return Promise.resolve(category);
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
     },
   }
 };
