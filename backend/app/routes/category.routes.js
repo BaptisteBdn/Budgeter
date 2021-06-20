@@ -15,9 +15,17 @@ module.exports = function (app) {
 
     router.post("/", category.create);
 
-    // Retrieve all categories
+    router.delete("/", category.delete);
+
+    router.get("/all", category.findAll);
+
+    // Retrieve only categories
     router.get("/", category.findCategories);
 
     // Retrieve all subcategories from a category
     router.get("/:category", category.findAllSubcategoriesFromCategories);
+
+    router.post("/:category", category.updateCategory);
+
+    router.post("/:category/subcategory/:subcategory", category.updateSubCategory);
 };

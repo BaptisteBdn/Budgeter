@@ -12,6 +12,10 @@ class CategoryService {
         return api().get('/api/categories');
     }
 
+    getAllCategories() {
+        return api().get('/api/categories/all');
+    }
+
     getSubcategories(category) {
         return api().get(`/api/categories/${category}`);
     }

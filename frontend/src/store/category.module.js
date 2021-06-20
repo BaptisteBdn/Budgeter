@@ -23,6 +23,16 @@ export const category = {
         }
       );
     },
+    getAllCategories({ commit }) {
+      return CategoryService.getAllCategories().then(
+        category => {
+          return Promise.resolve(category);
+        },
+        error => {
+          return Promise.reject(error);
+        }
+      );
+    },
     getSubcategories({ commit }, category) {
       return CategoryService.getSubcategories(category).then(
         category => {

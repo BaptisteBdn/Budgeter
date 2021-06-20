@@ -115,7 +115,8 @@
     "shortTitle": "BDG",
     "dashboard": "dashboard",
     "transactions": "transactions",
-    "balance": "balance"
+    "balance": "balance",
+    "categories": "categories"
   },
   "balance": {
     "title": "Balance"

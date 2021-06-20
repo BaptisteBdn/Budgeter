@@ -1,3 +1,4 @@
+const { sequelize, category } = require("../models");
 const db = require("../models");
 const Category = db.category;
 
@@ -5,7 +6,7 @@ const Category = db.category;
 exports.create = (req, res) => {
     // Validate request
 
-    if (!req.body.category && !req.body.subcategory) {
+    if (!req.body.category || !req.body.subcategory) {
         res.status(400).send({
             message: "Content needs category and subcategory!"
         });
@@ -27,14 +28,78 @@ exports.create = (req, res) => {
         });
 };
 
+exports.updateCategory = (req, res) => {
+    if (!req.body.category || !req.body.subcategory) {
+        res.status(400).send({
+            message: "Content needs category and subcategory!"
+        });
+        return;
+    }
+
+    sequelize.query(`UPDATE categories SET category = '${req.body.category}' WHERE category = '${req.params.category}'`)
+        .then(res.status(200).send())
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the category."
+            });
+        });
+};
+
+exports.updateSubCategory = (req, res) => {
+    if (!req.body.subcategory) {
+        res.status(400).send({
+            message: "Content needs subcategory !"
+        });
+        return;
+    }
+
+    Category.update(req.body, {
+        where: {
+            category: req.params.category,
+            subcategory: req.params.subcategory
+        }
+    })
+        .then(res.status(200).send())
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while deleting the category."
+            });
+        });
+};
+
+exports.delete = (req, res) => {
+    // Validate request
+
+    if (!req.body.category || !req.body.subcategory) {
+        res.status(400).send({
+            message: "Content needs category and subcategory!"
+        });
+        return;
+    }
+
+    Category.destroy({
+        where: {
+            category: req.body.category,
+            subcategory: req.body.subcategory
+        }
+    })
+        .then(res.status(200).send())
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while deleting the category."
+            });
+        });
+};
+
 exports.findAll = (req, res) => {
     return Category.findAll(
         {
-            attributes: ['category', 'subcategory'],
-            order: [
-                ['category'],
-                ['subcategory']
-            ],
+            attributes: ['category', [sequelize.literal('array_agg(subcategory ORDER BY subcategory)'), 'subcategories']],
+            group: [['category']],
+            order: [['category']],
             raw: true
         }
     )
@@ -61,7 +126,7 @@ exports.findCategories = (req, res) => {
     )
         .then(data => {
             res.send([...new Set(data.map((c) => c.category)),
-              ]);
+            ]);
         })
         .catch(err => {
             res.status(500).send({
