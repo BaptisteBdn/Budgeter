@@ -6,6 +6,10 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
+    if (config.signup !== "true") {
+        return res.status(500).send({ message: "Sign up is disabled" });
+    }
+
     // Save User to Database
     User.create({
         username: req.body.username,

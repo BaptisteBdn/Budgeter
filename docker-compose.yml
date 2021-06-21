@@ -4,13 +4,12 @@ services:
   frontend:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile-dev
       args:
           - VUE_APP_API_URL=${API_URL}
     depends_on:
       - backend
     ports:
-      - 8080:8080
+      - 8080:80
     volumes:
       - ./frontend:/src
       - /src/node_modules
@@ -18,7 +17,6 @@ services:
   backend:
     build: 
       context: ./backend
-      dockerfile: Dockerfile-dev
     ports:
       - 8081:8081
     volumes:
@@ -37,7 +35,7 @@ services:
   db:
     image: postgres
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - /home/vagrant/db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USERNAME}

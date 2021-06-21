@@ -1,13 +1,16 @@
-FROM node:14-alpine as base
+FROM node:14-alpine as build
 
 WORKDIR /src
+ENV PATH /src/node_modules/.bin:$PATH
 COPY package*.json ./
-RUN npm install
+RUN npm install --silent
 RUN npm install -g @vue/cli
-COPY . .
+COPY . /src
 ARG VUE_APP_API_URL
 ENV VUE_APP_API_URL $VUE_APP_API_URL
+RUN npm run build
 
-FROM base as dev
-ENV NODE_ENV=development
-CMD ["npm", "run", "serve"]
+FROM nginx
+COPY --from=build /src/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
