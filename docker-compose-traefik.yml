@@ -1,0 +1,67 @@
+version: "3"
+
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+          - VUE_APP_API_URL=${API_URL}
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/src
+      - /src/node_modules
+    networks:
+      - proxy      
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.budgeter.rule=Host(`budgeter.example.com`)"
+      - "traefik.http.routers.budgeter.entrypoints=https"
+      - "traefik.http.routers.budgeter.tls=true"
+      - "traefik.http.routers.budgeter.tls.certresolver=mydnschallenge"
+  
+            
+  backend:
+    build: 
+      context: ./backend
+    volumes:
+      - ./backend:/src
+      - /src/node_modules
+    depends_on: 
+      - db
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      SECRET: ${SECRET}
+      SIGNUP_ENABLE: ${SIGNUP_ENABLE}
+    networks:
+      - proxy
+      - database
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.budgeter-api.rule=Host(`budgeter-api.example.com`)"
+    - "traefik.http.routers.budgeter-api.entrypoints=https"
+    - "traefik.http.routers.budgeter-api.tls=true"
+    - "traefik.http.routers.budgeter-api.tls.certresolver=mydnschallenge"
+
+    
+  db:
+    image: postgres
+    volumes:
+      - /home/vagrant/db:/var/lib/postgresql/data
+    networks:
+      - database
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+      
+networks:
+  proxy:
+    external: true
+  database:
+    internal: true
+
