@@ -5,6 +5,7 @@ import { auth } from './auth.module';
 import { transaction }  from './transaction.module';
 import { user }  from './user.module';
 import { category }  from './category.module';
+import { dashboard }  from './dashboard.module';
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     auth,
     transaction,
     user,
-    category
+    category,
+    dashboard
   }
 });

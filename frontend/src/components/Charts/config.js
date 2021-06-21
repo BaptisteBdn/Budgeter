@@ -220,6 +220,26 @@ export let barChartOptions = {
   }
 }
 
+export let pieChartOptions = {
+  maintainAspectRatio: false,
+  legend: {
+    display: false
+  },
+  responsive: true,
+  tooltips: {
+    backgroundColor: '#f5f5f5',
+    titleFontColor: '#333',
+    bodyFontColor: '#666',
+    bodySpacing: 4,
+    xPadding: 12,
+    mode: "nearest",
+    intersect: 0,
+    position: "nearest"
+  },
+
+}
+
+
 export let BalanceBarChartOptions = {
   ...basicOptions,
   tooltips: {
