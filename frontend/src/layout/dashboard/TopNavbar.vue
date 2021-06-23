@@ -1,7 +1,7 @@
 <template>
   <nav
     class="navbar navbar-expand-lg navbar-absolute"
-    :class="{ 'bg-white': showMenu, 'navbar-transparent': !showMenu }"
+    :class="{ 'bg-white': $menu.showMenu, 'navbar-transparent': !$menu.showMenu }"
   >
     <div class="container-fluid">
       <div class="navbar-wrapper">
@@ -37,7 +37,7 @@
       </button>
 
       <collapse-transition>
-        <div class="collapse navbar-collapse show" v-show="showMenu">
+        <div class="collapse navbar-collapse show" v-show="$menu.showMenu">
           <ul class="navbar-nav ml-auto">
             <base-dropdown
               tag="li"
@@ -92,7 +92,6 @@ export default {
   },
   data() {
     return {
-      showMenu: false,
       searchModalVisible: false,
       searchQuery: "",
     };
@@ -114,7 +113,7 @@ export default {
       this.$sidebar.displaySidebar(false);
     },
     toggleMenu() {
-      this.showMenu = !this.showMenu;
+      this.$menu.displayMenu(!this.$menu.showMenu);
     },
     logOut() {
       this.$store.dispatch("auth/logout");

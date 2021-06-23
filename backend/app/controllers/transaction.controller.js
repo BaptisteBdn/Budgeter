@@ -165,7 +165,7 @@ exports.getBalance = (req, res) => {
                     
                     users.forEach((value, key) => {
                         labels.push(value.username);
-                        data.push(value.totalPayed - value.totalToPay);
+                        data.push(Math.round((value.totalPayed - value.totalToPay) * 100) / 100);
                     })
 
                     res.send({ labels: labels, data: data });

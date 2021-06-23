@@ -9,15 +9,24 @@ const SidebarStore = {
   }
 };
 
+const MenuStore = {
+  showMenu: false,
+  displayMenu(value) {
+    this.showMenu = value;
+  }
+};
+
 const SidebarPlugin = {
   install(Vue) {
     let app = new Vue({
       data: {
-        sidebarStore: SidebarStore
+        sidebarStore: SidebarStore,
+        menuStore: MenuStore
       }
     });
 
     Vue.prototype.$sidebar = app.sidebarStore;
+    Vue.prototype.$menu = app.menuStore;
     Vue.component("side-bar", Sidebar);
     Vue.component("sidebar-link", SidebarLink);
   }

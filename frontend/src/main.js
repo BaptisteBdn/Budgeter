@@ -14,6 +14,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import VeeValidate from 'vee-validate';
+import Vue2TouchEvents from 'vue2-touch-events'
 import RouterPrefetch from 'vue-router-prefetch'
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import App from "./App";
@@ -29,6 +30,7 @@ Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons)
 Vue.use(VueRouter);
 Vue.use(VeeValidate, { fieldsBagName: 'veeFields' });
+Vue.use(Vue2TouchEvents)
 Vue.use(RouterPrefetch);
 
 /* eslint-disable no-new */
